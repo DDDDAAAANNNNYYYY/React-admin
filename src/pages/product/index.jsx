@@ -11,82 +11,87 @@ const times = Array.from({length: 48}, (x, i) => (i + 1) / 2);
 
 export default class Product extends Component {
 
-    state = {
-        users: [],
-        mylist: [],
-        timeSheetUnit: {
-            timeSheetUnitID: "60786fbf38b6925c604ebfe0",
-            username: "user2",
-            submissionStatus: "Not Started",
-            approvalStatus: "N/A",
-            comments: "",
-            week: [
-                {
-                    date: new Date(Date.parse("04-11-2021")),
-                    startTime: -1,
-                    endTime: -1,
-                    // totalHours: 0,
-                    floatingDay: false,
-                    holiday: false,
-                    vacation: false,
-                },
-                {
-                    date: new Date(Date.parse("04-12-2021")),
-                    startTime: -1,
-                    endTime: -1,
-                    // totalHours: 0,
-                    floatingDay: false,
-                    holiday: true,
-                    vacation: false,
-                },
-                {
-                    date: new Date(Date.parse("04-13-2021")),
-                    startTime: -1,
-                    endTime: -1,
-                    // totalHours: 0,
-                    floatingDay: true,
-                    holiday: false,
-                    vacation: false,
-                },
-                {
-                    date: new Date(Date.parse("04-14-2021")),
-                    startTime: 9,
-                    endTime: 18,
-                    // totalHours: 0,
-                    floatingDay: false,
-                    holiday: false,
-                    vacation: false,
-                },
-                {
-                    date: new Date(Date.parse("04-15-2021")),
-                    startTime: 9,
-                    endTime: 18,
-                    // totalHours: 0,
-                    floatingDay: false,
-                    holiday: false,
-                    vacation: false,
-                },
-                {
-                    date: new Date(Date.parse("04-16-2021")),
-                    startTime: 9,
-                    endTime: 18,
-                    // totalHours: 0,
-                    floatingDay: false,
-                    holiday: false,
-                    vacation: false,
-                },
-                {
-                    date: new Date(Date.parse("04-17-2021")),
-                    startTime: -1,
-                    endTime: -1,
-                    // totalHours: 0,
-                    floatingDay: false,
-                    holiday: false,
-                    vacation: false,
-                }
-            ]
+    constructor(props) {
+        super(props);
+        this.state = {
+            users: [],
+            mylist: [],
+            timeSheetUnit: {
+                timeSheetUnitID: "60786fbf38b6925c604ebfe0",
+                username: "user2",
+                submissionStatus: "Not Started",
+                approvalStatus: "N/A",
+                comments: "",
+                week: [
+                    {
+                        date: new Date(Date.parse("04-11-2021")),
+                        startTime: -1,
+                        endTime: -1,
+                        // totalHours: 0,
+                        floatingDay: false,
+                        holiday: false,
+                        vacation: false,
+                    },
+                    {
+                        date: new Date(Date.parse("04-12-2021")),
+                        startTime: -1,
+                        endTime: -1,
+                        // totalHours: 0,
+                        floatingDay: false,
+                        holiday: true,
+                        vacation: false,
+                    },
+                    {
+                        date: new Date(Date.parse("04-13-2021")),
+                        startTime: -1,
+                        endTime: -1,
+                        // totalHours: 0,
+                        floatingDay: true,
+                        holiday: false,
+                        vacation: false,
+                    },
+                    {
+                        date: new Date(Date.parse("04-14-2021")),
+                        startTime: 9,
+                        endTime: 18,
+                        // totalHours: 0,
+                        floatingDay: false,
+                        holiday: false,
+                        vacation: false,
+                    },
+                    {
+                        date: new Date(Date.parse("04-15-2021")),
+                        startTime: 9,
+                        endTime: 18,
+                        // totalHours: 0,
+                        floatingDay: false,
+                        holiday: false,
+                        vacation: false,
+                    },
+                    {
+                        date: new Date(Date.parse("04-16-2021")),
+                        startTime: 9,
+                        endTime: 18,
+                        // totalHours: 0,
+                        floatingDay: false,
+                        holiday: false,
+                        vacation: false,
+                    },
+                    {
+                        date: new Date(Date.parse("04-17-2021")),
+                        startTime: -1,
+                        endTime: -1,
+                        // totalHours: 0,
+                        floatingDay: false,
+                        holiday: false,
+                        vacation: false,
+                    }
+                ]
+            }
         }
     }
+
+    
 
     componentDidMount() {
         // this.getUsers().then((res)=>{
@@ -104,7 +109,7 @@ export default class Product extends Component {
 
     getTotalCompensatedHours() {
         let res = 0;
-        this.state.timeSheetUnit.week.forEach((d, index) => {res += (d.endTime - d.startTime + (d.floatingDay || d.holiday || d.vacation? 8 : 0));});
+        this.state.timeSheetUnit.week.forEach((d, index) => {res += (d.endTime - d.startTime + ((d.floatingDay == true || d.holiday == true || d.vacation == true)? 8 : 0));});
         return res;
     }
 
@@ -120,15 +125,18 @@ export default class Product extends Component {
     }
 
     saveUsers = async () => {
+        // console.log(this.state.timeSheetUnit.week[0].date);
         const mylista = storageUtils.getList();
         const index = storageUtils.getIndex();
         const name = memoryUtils.user.name;
         const result = await reqUsers(name);
         this.setState({mylist: mylista[index]});
+        this.setState({timeSheetUnit: mylista[index]});
         //this.setState({mylist: mylista[index].week});
         const  users  = result;
         console.log("result", result);
         console.log("mylist", this.state.mylist);
+        // console.log("timeSheetUnit", this.state.timeSheetUnit);
         this.setState({users: users});
     };
 
@@ -137,12 +145,12 @@ export default class Product extends Component {
             <div>
                 <div>
                     <div>
-                        Week Ending <input type = 'date' defaultValue = {this.state.timeSheetUnit.week[6].date.toDateString()} onChange = {(e) =>{console.log("eeeee", e.target.value)}}></input>
+                        Week Ending <input type = 'date' defaultValue = {this.state.timeSheetUnit.week[6].date} onChange = {(e) =>{console.log("eeeee", e.target.value)}}></input>
                         Total Billing Hours <input type = 'text' value={this.getTotalBillingHours()}></input>
                         Total Compensated Hours <input type = 'text' value={this.getTotalCompensatedHours()}></input>
                     </div>
                 </div>
-                <table>
+                <table style={{border:"2px solid black", width:"100%"}}>
                     <tbody>
                     <tr>
                         <th>Day</th>
@@ -157,7 +165,7 @@ export default class Product extends Component {
                     {this.state.timeSheetUnit.week.map(({date, startTime, endTime, floatingDay, holiday, vacation}, index) =>
                         <tr key = {index}>
                             <td>{days[index]}</td>
-                            <td>{date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear()}</td>
+                            <td>{date.toString()}</td>
                             <td>
                                 <select value={this.state.timeSheetUnit.week[index].startTime} onChange={(e) => this.setState(prevState => {let tsu = Object.assign({},prevState); tsu.timeSheetUnit.week[index].startTime = e.target.value; if (e.target.value === -1) {tsu.timeSheetUnit.week[index].endTime = -1;}; return tsu;})}>
                                     <option value={-1} selected = {startTime === -1}>N/A</option>
@@ -182,13 +190,13 @@ export default class Product extends Component {
                             </td>
                             <td>{startTime === -1 || endTime === -1? 0 : (endTime - startTime)}</td>
                             <td>
-                                <input type = 'radio' name = {index} value = 'floatingDay' checked = {floatingDay} onChange={(e) => this.setState(prevState => {let st = Object.assign({}, prevState); st.timeSheetUnit.week[index].floatingDay = (e.target.value == 'floatingDay'); if (e.target.value == 'floatingDay'){st.timeSheetUnit.week[index].startTime = -1;st.timeSheetUnit.week[index].endTime =-1;}; return st;})}></input>
+                                <input type = 'radio' name = {index} value = 'floatingDay' checked = {floatingDay == true} onChange={(e) => this.setState(prevState => {let st = Object.assign({}, prevState); st.timeSheetUnit.week[index].floatingDay = (e.target.value == 'floatingDay'); if (e.target.value == 'floatingDay'){st.timeSheetUnit.week[index].startTime = -1;st.timeSheetUnit.week[index].endTime =-1;}; return st;})}></input>
                             </td>
                             <td>
-                                <input type = 'radio' name = {index} value = 'holiday' checked = {holiday} disabled></input>
+                                <input type = 'radio' name = {index} value = 'holiday' checked = {holiday == true} disabled></input>
                             </td>
                             <td>
-                                <input type = 'radio' name = {index} value = 'vacation' checked = {vacation} onChange={(e) => this.setState(prevState => {let st = Object.assign({}, prevState); st.timeSheetUnit.week[index].vacation = (e.target.value == 'vacation'); if (e.target.value == 'vacation'){st.timeSheetUnit.week[index].startTime = -1;st.timeSheetUnit.week[index].endTime =-1;}; return st;})}></input>
+                                <input type = 'radio' name = {index} value = 'vacation' checked = {vacation == true} onChange={(e) => this.setState(prevState => {let st = Object.assign({}, prevState); st.timeSheetUnit.week[index].vacation = (e.target.value == 'vacation'); if (e.target.value == 'vacation'){st.timeSheetUnit.week[index].startTime = -1;st.timeSheetUnit.week[index].endTime =-1;}; return st;})}></input>
                             </td>
                         </tr>
                     )}
