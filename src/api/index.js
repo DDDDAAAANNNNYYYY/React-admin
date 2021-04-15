@@ -16,7 +16,8 @@ export const reqCheckLogin = (token) =>
 
 export const reqUsers = (username) => ajax("api/user/list", {username}, "POST")
 
-
+export const reqContact= (params, test1, test2) =>
+    ajax("api/user/saveUser", {params, test1, test2}, "POST");
 
 //添加或更新用户
 export const reqAddOrUpdateUser = (user) => ajax("http://120.55.193.14:5000/manage/user/"+(user._id?'update':'add'), user, "POST");
