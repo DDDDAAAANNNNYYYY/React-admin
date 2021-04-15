@@ -118,11 +118,13 @@ export default class Product extends Component {
 
     uploadUsers = () => {
         console.log('upload.....');
-        const something = this.state.mylist;
+        const something = this.state.timeSheetUnit;
+        something.comments = "";
+
         console.log("something", something);
-        axios.post('api/user/saveUser', something).then(res => {
-            console.log(res.data);
-        });
+        // axios.post('api/user/saveUser', something).then(res => {
+        //     console.log(res.data);
+        // });
     }
 
     saveUsers = async () => {
