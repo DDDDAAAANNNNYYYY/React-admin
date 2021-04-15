@@ -14,9 +14,12 @@ export const reqLogin = (username, password) =>
 export const reqCheckLogin = (token) =>
   ajax("auth/oauth/verify", {token}, "POST");  
 
+  export const reqContact= (params) =>
+  ajax("api/user/saveUser", {params}, "POST"); 
+
 export const reqUsers = (username) => ajax("api/user/list", {username}, "POST")
 
-
+export const reqUserInfo = (username) => ajax("api/user/getUserInfo", {username}, "POST");
 
 //添加或更新用户
 export const reqAddOrUpdateUser = (user) => ajax("http://120.55.193.14:5000/manage/user/"+(user._id?'update':'add'), user, "POST");

@@ -19,6 +19,8 @@ export default function ajax(url,data={},type="GET") {
         }else{//发post请求
             promise= axios.post(url,
                 qs.stringify(data)
+                // data
+                
             )
         }
         //2.如果成功,调用resolve

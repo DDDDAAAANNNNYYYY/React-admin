@@ -25,6 +25,21 @@ export default{
  deleteUser(){
     //  localStorage.removeItem(USER_KEY)
     store.remove(USER_KEY)
- }
+ },
+ saveList(list) {
+   store.set("TimeList", list)
+ },
+ getList() {
+   return store.get("TimeList") || {}
+ },
+ saveIndex(index){
+   store.set("Index", index);
+
+ },
+ getIndex(){
+  return store.get("Index") || 0;
+
+}
+ 
 }
 
