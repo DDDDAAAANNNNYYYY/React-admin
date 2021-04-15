@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { holidays } from '../../data/holidays';
 import axios from 'axios';
 import memoryUtils from "../../utils/memoryUtils";
 import {reqUsers, reqContact} from "../../api";
@@ -28,6 +27,7 @@ export default class Product extends Component {
                     endTime: -1,
                     // totalHours: 0,
                     floatingDay: false,
+                    holiday: false,
                     vacation: false,
                 },
                 {
@@ -36,6 +36,7 @@ export default class Product extends Component {
                     endTime: -1,
                     // totalHours: 0,
                     floatingDay: false,
+                    holiday: true,
                     vacation: false,
                 },
                 {
@@ -44,6 +45,7 @@ export default class Product extends Component {
                     endTime: -1,
                     // totalHours: 0,
                     floatingDay: true,
+                    holiday: false,
                     vacation: false,
                 },
                 {
@@ -52,6 +54,7 @@ export default class Product extends Component {
                     endTime: 18,
                     // totalHours: 0,
                     floatingDay: false,
+                    holiday: false,
                     vacation: false,
                 },
                 {
@@ -60,6 +63,7 @@ export default class Product extends Component {
                     endTime: 18,
                     // totalHours: 0,
                     floatingDay: false,
+                    holiday: false,
                     vacation: false,
                 },
                 {
@@ -68,6 +72,7 @@ export default class Product extends Component {
                     endTime: 18,
                     // totalHours: 0,
                     floatingDay: false,
+                    holiday: false,
                     vacation: false,
                 },
                 {
@@ -76,11 +81,11 @@ export default class Product extends Component {
                     endTime: -1,
                     // totalHours: 0,
                     floatingDay: false,
+                    holiday: false,
                     vacation: false,
                 }
             ]
-        },
-        isHoliday: [],
+        }
     }
 
     componentDidMount() {
@@ -90,20 +95,7 @@ export default class Product extends Component {
         this.saveUsers();
     }
 
-    getIsHoliday() {
-        let arr = [];
-        for (let i = 0; i < 7; i++) {
-            arr.push(this.dayIsHoliday(this.state.timeSheetUnit.week[i], holidays));
-        }
-        this.setState(prevState => {let h = Object.assign({}, prevState); h.isHoliday = arr; return h;});
-    }
-
-    dayIsHoliday(d, holidays) {
-        let res = false;
-        holidays.forEach(h => {if (d.date.toDateString() === h.date.toDateString()) {res = true;}});
-        return res;
-    }
-
+    
     getTotalBillingHours() {
         let res = 0;
         this.state.timeSheetUnit.week.forEach(d => {res += d.endTime - d.startTime;});
@@ -112,7 +104,7 @@ export default class Product extends Component {
 
     getTotalCompensatedHours() {
         let res = 0;
-        this.state.timeSheetUnit.week.forEach((d, index) => {res += (d.endTime - d.startTime + (d.floatingDay || this.state.isHoliday[index] || d.vacation? 8 : 0));});
+        this.state.timeSheetUnit.week.forEach((d, index) => {res += (d.endTime - d.startTime + (d.floatingDay || d.holiday || d.vacation? 8 : 0));});
         return res;
     }
 
@@ -162,12 +154,12 @@ export default class Product extends Component {
                         <th>Holiday</th>
                         <th>Vacation</th>
                     </tr>
-                    {this.state.timeSheetUnit.week.map(({date, startTime, endTime, floatingDay, vacation}, index) =>
+                    {this.state.timeSheetUnit.week.map(({date, startTime, endTime, floatingDay, holiday, vacation}, index) =>
                         <tr key = {index}>
                             <td>{days[index]}</td>
                             <td>{date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear()}</td>
                             <td>
-                                <select value={this.state.timeSheetUnit.week[index].startTime} onChange={(e) => this.setState(prevState => {let tsu = Object.assign({},prevState.timeSheetUnit); tsu.week[index].startTime = e.target.value; if (e.target.value === -1) {tsu.week[index].endTime = -1;}; return {tsu};})}>
+                                <select value={this.state.timeSheetUnit.week[index].startTime} onChange={(e) => this.setState(prevState => {let tsu = Object.assign({},prevState); tsu.timeSheetUnit.week[index].startTime = e.target.value; if (e.target.value === -1) {tsu.timeSheetUnit.week[index].endTime = -1;}; return tsu;})}>
                                     <option value={-1} selected = {startTime === -1}>N/A</option>
                                     {
                                         times.map((time, index) =>
@@ -178,7 +170,7 @@ export default class Product extends Component {
                                 </select>
                             </td>
                             <td>
-                                <select value={this.state.timeSheetUnit.week[index].endTime} onChange={(e) => this.setState(prevState => {let tsu = Object.assign({},prevState.timeSheetUnit); tsu.week[index].endTime = e.target.value; if (e.target.value === -1) {tsu.week[index].startTime = -1;}; return {tsu};})}>
+                                <select value={this.state.timeSheetUnit.week[index].endTime} onChange={(e) => this.setState(prevState => {let tsu = Object.assign({},prevState); tsu.timeSheetUnit.week[index].endTime = e.target.value; if (e.target.value === -1) {tsu.timeSheetUnit.week[index].startTime = -1;}; return tsu;})}>
                                     <option value={-1} selected = {startTime === -1}>N/A</option>
                                     {
                                         times.map((time, index) =>
@@ -189,9 +181,15 @@ export default class Product extends Component {
                                 </select>
                             </td>
                             <td>{startTime === -1 || endTime === -1? 0 : (endTime - startTime)}</td>
-                            <td>{floatingDay? 'X' : ''}</td>
-                            <td>{this.state.isHoliday[index]? 'X' : ''}</td>
-                            <td>{vacation? 'X' : ''}</td>
+                            <td>
+                                <input type = 'radio' name = {index} value = 'floatingDay' checked = {floatingDay} onChange={(e) => this.setState(prevState => {let st = Object.assign({}, prevState); st.timeSheetUnit.week[index].floatingDay = (e.target.value == 'floatingDay'); if (e.target.value == 'floatingDay'){st.timeSheetUnit.week[index].startTime = -1;st.timeSheetUnit.week[index].endTime =-1;}; return st;})}></input>
+                            </td>
+                            <td>
+                                <input type = 'radio' name = {index} value = 'holiday' checked = {holiday} disabled></input>
+                            </td>
+                            <td>
+                                <input type = 'radio' name = {index} value = 'vacation' checked = {vacation} onChange={(e) => this.setState(prevState => {let st = Object.assign({}, prevState); st.timeSheetUnit.week[index].vacation = (e.target.value == 'vacation'); if (e.target.value == 'vacation'){st.timeSheetUnit.week[index].startTime = -1;st.timeSheetUnit.week[index].endTime =-1;}; return st;})}></input>
+                            </td>
                         </tr>
                     )}
                     </tbody>
