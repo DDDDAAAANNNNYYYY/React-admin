@@ -144,9 +144,14 @@ export default class Product extends Component {
     chooseDate(event) {
         let chosenDate = Date.parse(event.target.value);
         let idxDiff = Math.ceil((chosenDate - Date.parse(this.state.timeSheetUnit.week[6].date))/(7 * 24 * 60 * 60 * 1000));
-        console.log(idxDiff);
-        storageUtils.saveIndex(storageUtils.getIndex() + idxDiff);
-        this.saveUsers();
+        let nextIdx = storageUtils.getIndex() - idxDiff;
+        if (nextIdx < 0 || nextIdx >= storageUtils.getList.length) {
+            alert("Invalid date");
+        }
+        else {
+            storageUtils.saveIndex(nextIdx);
+            this.saveUsers();
+        }
     }
 
     render() {
