@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import memoryUtils from "../../utils/memoryUtils";
 import {reqUsers, reqContact} from "../../api";
 import {message} from "antd";
 import storageUtils from "../../utils/storageUtils";
+import DatePicker from 'react-datepicker';
 
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const times = Array.from({length: 48}, (x, i) => (i + 1) / 2);
@@ -24,7 +25,7 @@ export default class Product extends Component {
                 comments: "",
                 week: [
                     {
-                        date: new Date(Date.parse("04-11-2021")),
+                        date: '2021-04-11',
                         startTime: -1,
                         endTime: -1,
                         // totalHours: 0,
@@ -33,7 +34,7 @@ export default class Product extends Component {
                         vacation: false,
                     },
                     {
-                        date: new Date(Date.parse("04-12-2021")),
+                        date: '2021-04-12',
                         startTime: -1,
                         endTime: -1,
                         // totalHours: 0,
@@ -42,7 +43,7 @@ export default class Product extends Component {
                         vacation: false,
                     },
                     {
-                        date: new Date(Date.parse("04-13-2021")),
+                        date: '2021-04-13',
                         startTime: -1,
                         endTime: -1,
                         // totalHours: 0,
@@ -51,7 +52,7 @@ export default class Product extends Component {
                         vacation: false,
                     },
                     {
-                        date: new Date(Date.parse("04-14-2021")),
+                        date: '2021-04-14',
                         startTime: 9,
                         endTime: 18,
                         // totalHours: 0,
@@ -60,7 +61,7 @@ export default class Product extends Component {
                         vacation: false,
                     },
                     {
-                        date: new Date(Date.parse("04-15-2021")),
+                        date: '2021-04-15',
                         startTime: 9,
                         endTime: 18,
                         // totalHours: 0,
@@ -69,7 +70,7 @@ export default class Product extends Component {
                         vacation: false,
                     },
                     {
-                        date: new Date(Date.parse("04-16-2021")),
+                        date: '2021-04-16',
                         startTime: 9,
                         endTime: 18,
                         // totalHours: 0,
@@ -78,7 +79,7 @@ export default class Product extends Component {
                         vacation: false,
                     },
                     {
-                        date: new Date(Date.parse("04-17-2021")),
+                        date: '2021-04-17',
                         startTime: -1,
                         endTime: -1,
                         // totalHours: 0,
@@ -131,7 +132,7 @@ export default class Product extends Component {
         const name = memoryUtils.user.name;
         const result = await reqUsers(name);
         this.setState({mylist: mylista[index]});
-        this.setState({timeSheetUnit: mylista[index]});
+        // this.setState({timeSheetUnit: mylista[index]});
         //this.setState({mylist: mylista[index].week});
         const  users  = result;
         console.log("result", result);
@@ -140,12 +141,25 @@ export default class Product extends Component {
         this.setState({users: users});
     };
 
+    chooseDate(event) {
+        let chosenDate = Date.parse(event.target.value);
+        let idxDiff = Math.ceil((chosenDate - Date.parse(this.state.timeSheetUnit.week[6].date))/(7 * 24 * 60 * 60 * 1000));
+        console.log(idxDiff);
+        storageUtils.saveIndex(storageUtils.getIndex() + idxDiff);
+        this.saveUsers();
+    }
+
     render() {
+        console.log(new Date('2021-04-17'));
         return (
             <div>
                 <div>
                     <div>
-                        Week Ending <input type = 'date' defaultValue = {this.state.timeSheetUnit.week[6].date} onChange = {(e) =>{console.log("eeeee", e.target.value)}}></input>
+                        {/* <div>
+                         <DatePicker selected={Date.parse(this.state.timeSheetUnit.week[6].date)} placeholderText="Select a Saturday" filterDate={date => date.getDay == 6} onChange={date => console.log(date)}/>
+                        </div> */}
+                        <br/>
+                        Week Ending <input type = 'date' defaultValue = {this.state.timeSheetUnit.week[6].date} onChange = {(e) =>{console.log("eeeee", e.target.value); this.chooseDate(e);}}></input>
                         Total Billing Hours <input type = 'text' value={this.getTotalBillingHours()}></input>
                         Total Compensated Hours <input type = 'text' value={this.getTotalCompensatedHours()}></input>
                     </div>
