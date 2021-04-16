@@ -8,43 +8,42 @@ import { reqCheckLogin, reqLogin } from "../../api/index.js";
 import memoryUtils from "../../utils/memoryUtils";
 import storageUtils from "../../utils/storageUtils";
 
+
 export default class Login extends Component {
   onFinish = async (values) => {
-    //console.log("Received values of form: ", values);
-    //
-    // console.log('this----',this)
+  
     const { username, password } = values;
     console.log("username=>" + username)
     console.log("password=>" + password)
+    console.log(values)
     try {
       const response = await reqLogin(username, password);
-      // .then(response=>{
-      //   
-      // }).catch(error=>{
-      //   
-      // );
+      
       console.log("请求成功", response);
 
       const token = response; //{state:0,data:user} {state:1,msg:'xxxx'}
-     
+      localStorage.setItem("token", token);
       const verifyResponse = await reqCheckLogin(token)
     
       const result = verifyResponse;
+
       console.log(result)
+
       if (result.name === "tester1") {
+
+      console.log(localStorage.getItem("token"));
+   
+   
+      if (token == localStorage.getItem("token")) {
+
         
         message.success("login sucessful");
-      
-        // const user = u;
-        // console.log(u)
         const user=result
         
-       
-       
         memoryUtils.user = user;
         storageUtils.saveUser(user);
         // console.log(this);
-        this.props.history.push("/user");
+        this.props.history.push("/");
       } else {
         // 
         message.error("wrong username/password");
@@ -144,15 +143,7 @@ export default class Login extends Component {
                 placeholder="password"
               />
             </Form.Item>
-            {/* <Form.Item>
-          <Form.Item name="remember" valuePropName="checked" noStyle>
-            <Checkbox>Remember me</Checkbox>
-          </Form.Item>
-
-          <a className="login-form-forgot" href="">
-            Forgot password
-          </a>
-        </Form.Item> */}
+          
 
             <Form.Item>
               <Button
@@ -163,7 +154,7 @@ export default class Login extends Component {
               >
                 Login
               </Button>
-              {/* Or <a href="">register now!</a> */}
+           
             </Form.Item>
           </Form>
         </section>

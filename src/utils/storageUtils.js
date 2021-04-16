@@ -27,19 +27,20 @@ export default{
     store.remove(USER_KEY)
  },
 
-saveIndex(index){
-    store.set("Index", index);
+ saveList(list) {
+   store.set("TimeList", list)
+ },
+ getList() {
+   return store.get("TimeList") || {}
+ },
+ saveIndex(index){
+   store.set("Index", index);
 
-},
-getIndex(){
-    return store.get("Index") || 0;
+ },
+ getIndex(){
+  return store.get("Index") || 0;
 
-},
-saveList(list) {
-    store.set("TimeList", list)
-},
-getList() {
-    return store.get("TimeList") || {}
-},
+}
+
 }
 

@@ -5,7 +5,7 @@ import { formateDate } from "../../utils/dataUtils";
 import memoryUtils from "../../utils/memoryUtils";
 import storageUtils from "../../utils/storageUtils";
 import LinkButton from "../../component/link-button";
-import { reqDelUser, reqUsers, reqAddOrUpdateUser } from "../../api";
+import { reqDelUser, reqUsers} from "../../api";
 import UserForm from "./user-form";
 export default class Users extends Component {
   state = {
@@ -13,7 +13,7 @@ export default class Users extends Component {
     showStatus: 0,
     roles: [],
     user: {},
-    visible: 1,
+    visible: 2,
     more: true,
   };
   constructor(props) {
@@ -24,7 +24,7 @@ export default class Users extends Component {
     this.columns = [
       {
         title: "Week",
-        dataIndex: "username",
+        dataIndex: "weekEnd",
       },
       {
         title: "Hours",
@@ -42,17 +42,11 @@ export default class Users extends Component {
       {
         title: "Comments",
         dataIndex: "comments",
-        // render: (role_id) =>
-        //   // {
-        //   //     const role=this.state.roles.find(role=>role._id===role_id)
-        //   //     return role?role.name:''}
-        //   //防止反复生成
-        //   this.roleNames[role_id],
+        
       },
       {
         title: "Options",
         render: (user,text, index) => (
-
 
             <span>
             {/* <LinkButton onClick={() => this.showUpdate(user)}>修改</LinkButton> */}
@@ -63,6 +57,7 @@ export default class Users extends Component {
                 storageUtils.saveIndex(index);
                 alert(index);
               }}>{user.option}</LinkButton>
+
           </span>
         ),
       },
@@ -92,11 +87,14 @@ export default class Users extends Component {
   getUsers = async () => {
     const name = memoryUtils.user.name;
     const result = await reqUsers(name);
+    
     if (true) {
       const  users  = result;
       console.log(result)
       console.log(users)
+
       storageUtils.saveList(result);
+
       // this.initRoles(roles);
       this.setState({ users});
     } else {
@@ -175,12 +173,12 @@ export default class Users extends Component {
         </div>
       })} */}
       <div style={{ display: this.state.more ? "block" : "none"}}>
-          <Button onClick={()=>{this.setState({visible:this.state.visible+1,
+          <Button onClick={()=>{this.setState({visible:this.state.visible+2,
           more: !this.state.more
           })}} type="button" className="load-more">Load more</Button>
           </div>
           <div style={{ display: this.state.more ? "none" : "block"}}>
-          <Button onClick={()=>{this.setState({visible:1,
+          <Button onClick={()=>{this.setState({visible:2,
           more: !this.state.more
           })}} type="button" className="load-more">Load less</Button>
           </div>
