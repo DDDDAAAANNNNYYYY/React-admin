@@ -47,17 +47,17 @@ export default class Users extends Component {
       {
         title: "Options",
         render: (user,text, index) => (
-          
-          
-          <span>
+
+            <span>
             {/* <LinkButton onClick={() => this.showUpdate(user)}>修改</LinkButton> */}
-            {/* <LinkButton onClick={() => this.deleteUser(user)}>删除</LinkButton> */}
-            {/* <LinkButton onClick={() => this._handleButtonClick(user)}>go</LinkButton> */}
-            
-            <LinkButton onClick={()=>{this.props.history.push('/product', {user});
-              storageUtils.saveIndex(index);
-              alert(index);
-            }}>{user.option}</LinkButton>
+              {/* <LinkButton onClick={() => this.deleteUser(user)}>删除</LinkButton> */}
+              {/* <LinkButton onClick={() => this._handleButtonClick(user)}>go</LinkButton> */}
+
+              <LinkButton onClick={()=>{this.props.history.push('/product', {user});
+                storageUtils.saveIndex(index);
+                alert(index);
+              }}>{user.option}</LinkButton>
+
           </span>
         ),
       },
@@ -92,7 +92,9 @@ export default class Users extends Component {
       const  users  = result;
       console.log(result)
       console.log(users)
-      storageUtils.saveList(result)
+
+      storageUtils.saveList(result);
+
       // this.initRoles(roles);
       this.setState({ users});
     } else {

@@ -18,7 +18,7 @@ export default class Admin extends Component {
     const user = localStorage.getItem("user_key");
     // 如果内存中没有存储user ==>当前没登陆
     if (!user ) {
-      
+    
       //自动跳转到登陆
       return <Redirect to="/login" />;
     }

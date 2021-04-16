@@ -26,6 +26,7 @@ export default{
     //  localStorage.removeItem(USER_KEY)
     store.remove(USER_KEY)
  },
+
  saveList(list) {
    store.set("TimeList", list)
  },
@@ -40,6 +41,6 @@ export default{
   return store.get("Index") || 0;
 
 }
- 
+
 }
 

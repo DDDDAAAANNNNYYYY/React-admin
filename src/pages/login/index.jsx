@@ -28,10 +28,14 @@ export default class Login extends Component {
       const result = verifyResponse;
 
       console.log(result)
+
+      if (result.name === "tester1") {
+
       console.log(localStorage.getItem("token"));
    
    
       if (token == localStorage.getItem("token")) {
+
         
         message.success("login sucessful");
         const user=result
