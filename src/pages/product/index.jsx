@@ -7,6 +7,7 @@ import {message} from "antd";
 import storageUtils from "../../utils/storageUtils";
 // import DatePicker from 'react-datepicker';
 import {AiFillInfoCircle} from 'react-icons/ai';
+import ReactTooltip from 'react-tooltip';
 
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const times = Array.from({length: 48}, (x, i) => (i + 1) / 2);
@@ -291,7 +292,7 @@ export default class Product extends Component {
                     )}
                     </tbody>
                 </table>
-                <button onClick={this.setDefault} disabled={this.state.timeSheetUnit.submissionStatus == 'complete'} title='Save daily hours as default; future weekly timesheet will show same hours.'>Set Default <AiFillInfoCircle style={{}}></AiFillInfoCircle></button>
+                <button onClick={this.setDefault} disabled={this.state.timeSheetUnit.submissionStatus == 'complete'}>Set Default <AiFillInfoCircle data-tip='Save daily hours as default; future weekly timesheet will show same hours.'></AiFillInfoCircle></button><ReactTooltip />
                 <div>
                     <select disabled={this.state.timeSheetUnit.submissionStatus == 'complete'} value={this.state.timeSheetUnit.approvalStatus} onChange={(e) => this.setState(prevState => {let st = Object.assign({}, prevState); st.timeSheetUnit.approvalStatus = e.target.value; console.log(this.state);return st;})}>
                         <option value = 'approved'>Approved Timesheet</option>
