@@ -7,6 +7,10 @@ import storageUtils from "../../utils/storageUtils";
 import LinkButton from "../../component/link-button";
 import { reqDelUser, reqUsers} from "../../api";
 import UserForm from "./user-form";
+import {AiFillInfoCircle} from 'react-icons/ai';
+import ReactTooltip from 'react-tooltip';
+
+
 export default class Users extends Component {
   state = {
     users: [], 
@@ -41,7 +45,12 @@ export default class Users extends Component {
       },
       {
         title: "Comments",
-        dataIndex: "comments",
+        // dataIndex: "comments",
+        render:(user) => (
+          <span>
+            {user.comments} {user.submissionStatus == 'incomplete' ? <span><AiFillInfoCircle data-tip='3 floatings days left.'></AiFillInfoCircle><ReactTooltip /></span> : null}
+          </span>
+        )
         
       },
       {
@@ -55,7 +64,7 @@ export default class Users extends Component {
 
               <LinkButton onClick={()=>{this.props.history.push('/product', {user});
                 storageUtils.saveIndex(index);
-                alert(index);
+                // alert(index);
               }}>{user.option}</LinkButton>
 
           </span>
