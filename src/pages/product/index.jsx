@@ -132,7 +132,7 @@ export default class Product extends Component {
         const name = memoryUtils.user.name;
         const result = await reqUsers(name);
         this.setState({mylist: mylista[index]});
-        // this.setState({timeSheetUnit: mylista[index]});
+        this.setState({timeSheetUnit: mylista[index]});
         //this.setState({mylist: mylista[index].week});
         const  users  = result;
         console.log("result", result);
@@ -164,7 +164,7 @@ export default class Product extends Component {
                          <DatePicker selected={Date.parse(this.state.timeSheetUnit.week[6].date)} placeholderText="Select a Saturday" filterDate={date => date.getDay == 6} onChange={date => console.log(date)}/>
                         </div> */}
                         <br/>
-                        Week Ending <input type = 'date' defaultValue = {this.state.timeSheetUnit.week[6].date} onChange = {(e) =>{console.log("eeeee", e.target.value); this.chooseDate(e);}}></input>
+                        Week Ending <input type = 'date' value = {this.state.timeSheetUnit.week[6].date} onChange = {(e) =>{console.log("eeeee", e.target.value); this.chooseDate(e);}}></input>
                         Total Billing Hours <input type = 'text' value={this.getTotalBillingHours()}></input>
                         Total Compensated Hours <input type = 'text' value={this.getTotalCompensatedHours()}></input>
                     </div>

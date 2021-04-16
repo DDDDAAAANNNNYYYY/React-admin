@@ -31,7 +31,7 @@ export default class Login extends Component {
     
       const result = verifyResponse;
       console.log(result)
-      if (result.name === "admin") {
+      if (result.name === "tester1") {
         
         message.success("login sucessful");
       
