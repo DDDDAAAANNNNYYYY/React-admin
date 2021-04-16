@@ -5,7 +5,8 @@ import memoryUtils from "../../utils/memoryUtils";
 import {reqContact,reqUsers} from "../../api";
 import {message} from "antd";
 import storageUtils from "../../utils/storageUtils";
-import DatePicker from 'react-datepicker';
+// import DatePicker from 'react-datepicker';
+import {AiFillInfoCircle} from 'react-icons/ai';
 
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const times = Array.from({length: 48}, (x, i) => (i + 1) / 2);
@@ -120,18 +121,31 @@ export default class Product extends Component {
 
     }
 
+    getFloatingDayComment() {
+        let cnt = 0;
+        this.state.timeSheetUnit.week.forEach((d, index) =>{cnt += (d.floatingDay == true? 1 : 0)});
+        return (cnt == 0? "" : (cnt + " floating day(s) required;"));
+    }
+
+    getVacationComment() {
+        let cnt = 0;
+        this.state.timeSheetUnit.week.forEach((d, index) =>{cnt += (d.vacation == true? 1 : 0)});
+        return (cnt == 0? "" : (cnt + " vacation day(s) required;"));
+    }
+
     updateStatus = async () => {   
         // this.state;
       
        
        this.setState(prevState => {
            let st = Object.assign({}, prevState);
-           if (prevState.timeSheetUnit.approvalStatus == 'Approved') {
-               st.timeSheetUnit.submissionStatus = 'Complete';
+           if (prevState.timeSheetUnit.approvalStatus == 'approved') {
+               st.timeSheetUnit.submissionStatus = 'complete';
            }
            else {
-               st.timeSheetUnit.submissionStatus = 'Incomplete';
+               st.timeSheetUnit.submissionStatus = 'incomplete';
            }
+           st.timeSheetUnit.comments = this.getFloatingDayComment() + this.getVacationComment();
            return st;
        });
         const username = memoryUtils.user.name
@@ -205,7 +219,7 @@ export default class Product extends Component {
                             <td>{days[index]}</td>
                             <td>{date.toString()}</td>
                             <td>
-                                <select disabled={this.state.timeSheetUnit.approvalStatus == 'Approved'} value={this.state.timeSheetUnit.week[index].startTime} onChange={(e) => this.setState(prevState => {let tsu = Object.assign({},prevState); tsu.timeSheetUnit.week[index].startTime = e.target.value; if (e.target.value === -1) {tsu.timeSheetUnit.week[index].endTime = -1;}; return tsu;})}>
+                                <select disabled={this.state.timeSheetUnit.approvalStatus == 'approved'} value={this.state.timeSheetUnit.week[index].startTime} onChange={(e) => this.setState(prevState => {let tsu = Object.assign({},prevState); tsu.timeSheetUnit.week[index].startTime = e.target.value; if (e.target.value === -1) {tsu.timeSheetUnit.week[index].endTime = -1;}; return tsu;})}>
                                     <option value={-1} selected = {startTime === -1}>N/A</option>
                                     {
                                         times.map((time, index) =>
@@ -216,7 +230,7 @@ export default class Product extends Component {
                                 </select>
                             </td>
                             <td>
-                                <select disabled={this.state.timeSheetUnit.approvalStatus == 'Approved'} value={this.state.timeSheetUnit.week[index].endTime} onChange={(e) => this.setState(prevState => {let tsu = Object.assign({},prevState); tsu.timeSheetUnit.week[index].endTime = e.target.value; if (e.target.value === -1) {tsu.timeSheetUnit.week[index].startTime = -1;}; return tsu;})}>
+                                <select disabled={this.state.timeSheetUnit.approvalStatus == 'approved'} value={this.state.timeSheetUnit.week[index].endTime} onChange={(e) => this.setState(prevState => {let tsu = Object.assign({},prevState); tsu.timeSheetUnit.week[index].endTime = e.target.value; if (e.target.value === -1) {tsu.timeSheetUnit.week[index].startTime = -1;}; return tsu;})}>
                                     <option value={-1} selected = {startTime === -1}>N/A</option>
                                     {
                                         times.map((time, index) =>
@@ -228,27 +242,27 @@ export default class Product extends Component {
                             </td>
                             <td>{startTime === -1 || endTime === -1? 0 : (endTime - startTime)}</td>
                             <td>
-                                <input type = 'radio' name = {index} value = 'floatingDay' checked = {floatingDay == true} disabled={this.state.timeSheetUnit.approvalStatus == 'Approved'} onChange={(e) => this.setState(prevState => {let st = Object.assign({}, prevState); st.timeSheetUnit.week[index].floatingDay = (e.target.value == 'floatingDay'); if (e.target.value == 'floatingDay'){st.timeSheetUnit.week[index].startTime = -1;st.timeSheetUnit.week[index].endTime =-1;}; return st;})}></input>
+                                <input type = 'radio' name = {index} value = 'floatingDay' checked = {floatingDay == true} disabled={this.state.timeSheetUnit.approvalStatus == 'approved'} onChange={(e) => this.setState(prevState => {let st = Object.assign({}, prevState); st.timeSheetUnit.week[index].floatingDay = (e.target.value == 'floatingDay'); if (e.target.value == 'floatingDay'){st.timeSheetUnit.week[index].startTime = -1;st.timeSheetUnit.week[index].endTime =-1;}; return st;})}></input>
                             </td>
                             <td>
                                 <input type = 'radio' name = {index} value = 'holiday' checked = {holiday == true} disabled></input>
                             </td>
                             <td>
-                                <input type = 'radio' name = {index} value = 'vacation' checked = {vacation == true} disabled={this.state.timeSheetUnit.approvalStatus == 'Approved'} onChange={(e) => this.setState(prevState => {let st = Object.assign({}, prevState); st.timeSheetUnit.week[index].vacation = (e.target.value == 'vacation'); if (e.target.value == 'vacation'){st.timeSheetUnit.week[index].startTime = -1;st.timeSheetUnit.week[index].endTime =-1;}; return st;})}></input>
+                                <input type = 'radio' name = {index} value = 'vacation' checked = {vacation == true} disabled={this.state.timeSheetUnit.approvalStatus == 'approved'} onChange={(e) => this.setState(prevState => {let st = Object.assign({}, prevState); st.timeSheetUnit.week[index].vacation = (e.target.value == 'vacation'); if (e.target.value == 'vacation'){st.timeSheetUnit.week[index].startTime = -1;st.timeSheetUnit.week[index].endTime =-1;}; return st;})}></input>
                             </td>
                         </tr>
                     )}
                     </tbody>
                 </table>
-                <button onClick={this.setDefault} disabled={this.state.timeSheetUnit.approvalStatus == 'Approved'}>Set Default</button>
+                <button onClick={this.setDefault} disabled={this.state.timeSheetUnit.approvalStatus == 'approved'} title='Save daily hours as default; future weekly timesheet will show same hours.'>Set Default <AiFillInfoCircle></AiFillInfoCircle></button>
                 <div>
-                    <select disabled={this.state.timeSheetUnit.approvalStatus == 'Approved'} value={this.state.timeSheetUnit.approvalStatus} onChange={(e) => this.setState(prevState => {let st = Object.assign({}, prevState); st.timeSheetUnit.approvalStatus = e.target.value; console.log(this.state);return st;})}>
-                        <option value = 'Approved'>Approved Timesheet</option>
-                        <option value = 'Not Approved'>Unapproved Timesheet</option>
+                    <select disabled={this.state.timeSheetUnit.approvalStatus == 'approved'} value={this.state.timeSheetUnit.approvalStatus} onChange={(e) => this.setState(prevState => {let st = Object.assign({}, prevState); st.timeSheetUnit.approvalStatus = e.target.value; console.log(this.state);return st;})}>
+                        <option value = 'approved'>Approved Timesheet</option>
+                        <option value = 'not approved'>Unapproved Timesheet</option>
                     </select>
-                    <input type = 'file' disabled={this.state.timeSheetUnit.approvalStatus == 'Approved'}></input>
+                    <input type = 'file' disabled={this.state.timeSheetUnit.approvalStatus == 'approved'}></input>
                 </div>
-                <button onClick={this.updateStatus} disabled={this.state.timeSheetUnit.approvalStatus == 'Approved'}>Save</button>
+                <button onClick={this.updateStatus} disabled={this.state.timeSheetUnit.approvalStatus == 'approved'}>Save</button>
             </div>
             // <div>
             //     a:
