@@ -1,7 +1,7 @@
 import React, { Component, } from "react";
 // import { Card, Button, Table, Modal, message } from "antd";
 import { PAGE_SIZE } from "../../utils/constant";
-import { reqContact, reqUserInfo} from "../../api";
+import { reqUserInfo} from "../../api";
 import AddForm from "./add-form.jsx";
 import SetTree from "./setTree";
 import { get } from "store";

@@ -2,7 +2,7 @@ import React, { Component, useState } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import memoryUtils from "../../utils/memoryUtils";
-import {reqUsers, reqContact} from "../../api";
+import {reqUsers} from "../../api";
 import {message} from "antd";
 import storageUtils from "../../utils/storageUtils";
 import DatePicker from 'react-datepicker';
@@ -15,6 +15,7 @@ export default class Product extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            currentIdx: 0,
             users: [],
             mylist: [],
             timeSheetUnit: {
@@ -23,6 +24,7 @@ export default class Product extends Component {
                 submissionStatus: "Not Started",
                 approvalStatus: "N/A",
                 comments: "",
+                weekEnd: '2021-04-17',
                 week: [
                     {
                         date: '2021-04-11',
@@ -129,6 +131,7 @@ export default class Product extends Component {
         // console.log(this.state.timeSheetUnit.week[0].date);
         const mylista = storageUtils.getList();
         const index = storageUtils.getIndex();
+        this.setState({currentIdx: index});
         const name = memoryUtils.user.name;
         const result = await reqUsers(name);
         this.setState({mylist: mylista[index]});
@@ -139,13 +142,14 @@ export default class Product extends Component {
         console.log("mylist", this.state.mylist);
         // console.log("timeSheetUnit", this.state.timeSheetUnit);
         this.setState({users: users});
+        storageUtils.saveIndex(0);
     };
 
     chooseDate(event) {
         let chosenDate = Date.parse(event.target.value);
         let idxDiff = Math.ceil((chosenDate - Date.parse(this.state.timeSheetUnit.week[6].date))/(7 * 24 * 60 * 60 * 1000));
-        let nextIdx = storageUtils.getIndex() - idxDiff;
-        if (nextIdx < 0 || nextIdx >= storageUtils.getList.length) {
+        let nextIdx = this.state.currentIdx - idxDiff;
+        if (nextIdx < 0 || nextIdx >= storageUtils.getList().length) {
             alert("Invalid date");
         }
         else {

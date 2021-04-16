@@ -14,12 +14,12 @@ export const reqLogin = (username, password) =>
 export const reqCheckLogin = (token) =>
   ajax("auth/oauth/verify", {token}, "POST");  
 
-  export const reqContact= (params) =>
-  ajax("api/user/saveUser", {params}, "POST"); 
+//   export const reqContact= (params) =>
+//   ajax("api/user/saveUser", {params}, "POST"); 
 
 
-export const reqContact= (params, test1, test2) =>
-    ajax("api/user/saveUser", {params, test1, test2}, "POST");
+// export const reqContact= (params, test1, test2) =>
+//     ajax("api/user/saveUser", {params, test1, test2}, "POST");
 
 export const reqUsers = (username) => ajax("api/user/list", {username}, "POST")
 
