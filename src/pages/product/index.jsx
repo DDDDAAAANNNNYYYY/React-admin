@@ -2,7 +2,7 @@ import React, { Component, useState } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import memoryUtils from "../../utils/memoryUtils";
-import {reqUsers, reqContact} from "../../api";
+import {reqContact,reqUsers} from "../../api";
 import {message} from "antd";
 import storageUtils from "../../utils/storageUtils";
 import DatePicker from 'react-datepicker';
@@ -15,6 +15,7 @@ export default class Product extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            currentIdx: 0,
             users: [],
             mylist: [],
             timeSheetUnit: {
@@ -23,6 +24,7 @@ export default class Product extends Component {
                 submissionStatus: "Not Started",
                 approvalStatus: "N/A",
                 comments: "",
+                weekEnd: '2021-04-17',
                 week: [
                     {
                         date: '2021-04-11',
@@ -114,21 +116,37 @@ export default class Product extends Component {
         return res;
     }
 
-    uploadUsers = () => {
-        console.log('upload.....');
-        const something = this.state.timeSheetUnit;
-        something.comments = "";
-
-        console.log("something", something);
-        // axios.post('api/user/saveUser', something).then(res => {
-        //     console.log(res.data);
-        // });
+    setDefault = async() => {
+        
     }
+
+    updateStatus = async () => {   
+        // this.state;
+      
+       
+       this.setState(prevState => {
+           let st = Object.assign({}, prevState);
+           if (prevState.timeSheetUnit.approvalStatus == 'Approved') {
+               st.timeSheetUnit.submissionStatus = 'Complete';
+           }
+           else {
+               st.timeSheetUnit.submissionStatus = 'Incomplete';
+           }
+           return st;
+       });
+        const username = memoryUtils.user.name
+        console.log(this.state.timeSheetUnit.weekEnd);
+        axios.post("api/user/saveUser", this.state.timeSheetUnit).then( res=>{
+          alert("Updated successfully");
+        })
+    
+    };
 
     saveUsers = async () => {
         // console.log(this.state.timeSheetUnit.week[0].date);
         const mylista = storageUtils.getList();
         const index = storageUtils.getIndex();
+        this.setState({currentIdx: index});
         const name = memoryUtils.user.name;
         const result = await reqUsers(name);
         this.setState({mylist: mylista[index]});
@@ -139,13 +157,14 @@ export default class Product extends Component {
         console.log("mylist", this.state.mylist);
         // console.log("timeSheetUnit", this.state.timeSheetUnit);
         this.setState({users: users});
+        storageUtils.saveIndex(0);
     };
 
     chooseDate(event) {
         let chosenDate = Date.parse(event.target.value);
         let idxDiff = Math.ceil((chosenDate - Date.parse(this.state.timeSheetUnit.week[6].date))/(7 * 24 * 60 * 60 * 1000));
-        let nextIdx = storageUtils.getIndex() - idxDiff;
-        if (nextIdx < 0 || nextIdx >= storageUtils.getList.length) {
+        let nextIdx = this.state.currentIdx - idxDiff;
+        if (nextIdx < 0 || nextIdx >= storageUtils.getList().length) {
             alert("Invalid date");
         }
         else {
@@ -221,14 +240,15 @@ export default class Product extends Component {
                     )}
                     </tbody>
                 </table>
+                <button onClick={this.setDefault}>Set Default</button>
                 <div>
-                    <select>
-                        <option value = 'approved'>Approved Timesheet</option>
-                        <option value = 'unapproved'>Unapproved Timesheet</option>
+                    <select onChange={(e) => this.setState(prevState => {let st = Object.assign({}, prevState); st.timeSheetUnit.approvalStatus = e.target.value; console.log(this.state);return st;})}>
+                        <option value = 'Approved'>Approved Timesheet</option>
+                        <option value = 'Not Approved'>Unapproved Timesheet</option>
                     </select>
                     <input type = 'file'></input>
                 </div>
-                <button onClick={this.uploadUsers}>Save</button>
+                <button onClick={this.updateStatus}>Save</button>
             </div>
             // <div>
             //     a:

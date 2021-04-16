@@ -48,7 +48,9 @@ export default class Login extends Component {
         // 
         message.error("wrong username/password");
       }
-    } catch (error) {
+    } 
+  }
+    catch (error) {
       //console.log("", error);
     }
   };
@@ -57,7 +59,7 @@ export default class Login extends Component {
     values.errorFields.map((x) => {
       return //console.log(x.errors);
     });
-    // //console.log('value------',values)
+    // //console.log('value------',values) 
   };
   validatePwd = (rule, value, callback) => {
     // //console.log(value)
