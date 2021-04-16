@@ -2,7 +2,7 @@ import React, { Component, useState } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import memoryUtils from "../../utils/memoryUtils";
-import {reqUsers} from "../../api";
+import {reqContact,reqUsers} from "../../api";
 import {message} from "antd";
 import storageUtils from "../../utils/storageUtils";
 import DatePicker from 'react-datepicker';
@@ -116,16 +116,31 @@ export default class Product extends Component {
         return res;
     }
 
-    uploadUsers = () => {
-        console.log('upload.....');
-        const something = this.state.timeSheetUnit;
-        something.comments = "";
-
-        console.log("something", something);
-        // axios.post('api/user/saveUser', something).then(res => {
-        //     console.log(res.data);
-        // });
+    setDefault = async() => {
+        
     }
+
+    updateStatus = async () => {   
+        // this.state;
+      
+       
+       this.setState(prevState => {
+           let st = Object.assign({}, prevState);
+           if (prevState.timeSheetUnit.approvalStatus == 'Approved') {
+               st.timeSheetUnit.submissionStatus = 'Complete';
+           }
+           else {
+               st.timeSheetUnit.submissionStatus = 'Incomplete';
+           }
+           return st;
+       });
+        const username = memoryUtils.user.name
+        console.log(this.state.timeSheetUnit.weekEnd);
+        axios.post("api/user/saveUser", this.state.timeSheetUnit).then( res=>{
+          alert("Updated successfully");
+        })
+    
+    };
 
     saveUsers = async () => {
         // console.log(this.state.timeSheetUnit.week[0].date);
@@ -225,14 +240,15 @@ export default class Product extends Component {
                     )}
                     </tbody>
                 </table>
+                <button onClick={this.setDefault}>Set Default</button>
                 <div>
-                    <select>
-                        <option value = 'approved'>Approved Timesheet</option>
-                        <option value = 'unapproved'>Unapproved Timesheet</option>
+                    <select onChange={(e) => this.setState(prevState => {let st = Object.assign({}, prevState); st.timeSheetUnit.approvalStatus = e.target.value; console.log(this.state);return st;})}>
+                        <option value = 'Approved'>Approved Timesheet</option>
+                        <option value = 'Not Approved'>Unapproved Timesheet</option>
                     </select>
                     <input type = 'file'></input>
                 </div>
-                <button onClick={this.uploadUsers}>Save</button>
+                <button onClick={this.updateStatus}>Save</button>
             </div>
             // <div>
             //     a:
